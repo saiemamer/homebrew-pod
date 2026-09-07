@@ -5,8 +5,7 @@ cask "pod" do
   sha256 arm:   "0ae0ad4c01ce81b49fb67b652a6bc900c574da019d69de850ab3f67d9bd57198",
          intel: "091457aa4d65800f624da5620f33c7823f558c1b6fc0432569aa2d66920d986c"
 
-  url "https://github.com/saiemamer/pod/releases/download/v#{version}/pod-macos-#{arch}.dmg",
-      verified: "github.com/saiemamer/pod/"
+  url "https://github.com/saiemamer/pod/releases/download/v#{version}/pod-macos-#{arch}.dmg"
   name "Pod"
   desc "Analytics-engineering IDE (dbt, Omni, cross-repo agent initiatives) forked from Orca"
   homepage "https://github.com/saiemamer/pod"
