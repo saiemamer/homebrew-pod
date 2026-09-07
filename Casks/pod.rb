@@ -23,6 +23,14 @@ cask "pod" do
   app "Pod.app"
   binary "#{appdir}/Pod.app/Contents/Resources/bin/orca"
 
+  # Why: the build is unsigned, so Gatekeeper would refuse the downloaded app
+  # ("the developer cannot be verified"). Clearing quarantine here means
+  # brew install and brew upgrade leave an app that opens on double-click.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Pod.app"]
+  end
+
   zap trash: [
     "~/.orca",
     "~/Library/Application Support/orca",
