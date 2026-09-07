@@ -1,0 +1,56 @@
+name: Bump cask to the latest Pod release
+
+# Why polling: this repo has no access to saiemamer/pod's secrets, so it watches
+# the releases API instead of waiting for a dispatch. A new release shows up here
+# within half an hour.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare the cask with the latest release
+        id: latest
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="$(gh api repos/saiemamer/pod/releases/latest --jq .tag_name)"
+          version="${tag#v}"
+          current="$(sed -nE 's/^  version "([^"]+)"$/\1/p' Casks/pod.rb)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "cask: $current, latest release: $version"
+
+      - name: Rewrite the cask
+        if: steps.latest.outputs.version != steps.latest.outputs.current
+        shell: bash
+        env:
+          VERSION: ${{ steps.latest.outputs.version }}
+        run: |
+          set -euo pipefail
+          base="https://github.com/saiemamer/pod/releases/download/v$VERSION"
+          curl -fsSL -o arm64.dmg "$base/pod-macos-arm64.dmg"
+          curl -fsSL -o x64.dmg "$base/pod-macos-x64.dmg"
+          arm="$(sha256sum arm64.dmg | cut -d' ' -f1)"
+          intel="$(sha256sum x64.dmg | cut -d' ' -f1)"
+          rm -f arm64.dmg x64.dmg
+          sed -i -E "s/^  version \"[^\"]+\"$/  version \"$VERSION\"/" Casks/pod.rb
+          sed -i -E "s/^  sha256 arm:   \"[0-9a-f]+\",$/  sha256 arm:   \"$arm\",/" Casks/pod.rb
+          sed -i -E "s/^         intel: \"[0-9a-f]+\"$/         intel: \"$intel\"/" Casks/pod.rb
+          git config user.name pod-bump
+          git config user.email pod-bump@users.noreply.github.com
+          git add Casks/pod.rb
+          git commit -m "pod $VERSION"
+          git push
