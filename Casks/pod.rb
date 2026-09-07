@@ -18,7 +18,7 @@ cask "pod" do
   # Why no auto_updates: Pod builds are unsigned, and macOS only lets a signed app
   # replace itself, so brew upgrade is the update path.
   conflicts_with cask: ["orca", "orca@rc"]
-  depends_on macos: ">= :monterey"
+  depends_on macos: :monterey
 
   app "Pod.app"
   binary "#{appdir}/Pod.app/Contents/Resources/bin/orca"
