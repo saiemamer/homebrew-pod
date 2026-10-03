@@ -1,9 +1,9 @@
 cask "pod" do
   arch arm: "arm64", intel: "x64"
 
-  version "0.1.10"
-  sha256 arm:   "87143bb0b64583d0830d8e7c589e38bc85da5faa273ae465c8fc28393acc12e4",
-         intel: "b4e26e31e0c1d98d76f0c2993f78ac48f995e0e8d6ecac9cdd786e39d9447468"
+  version "0.1.11"
+  sha256 arm:   "1fbf03ce053380f0a2afec38842256e1ef11f653418d8cc6eb6440d7380187fe",
+         intel: "8135419694f9a07b2533064165f4c164dca8441b68aaebaf95385b4f34b3592a"
 
   url "https://github.com/saiemamer/pod/releases/download/v#{version}/pod-macos-#{arch}.dmg"
   name "Pod"
