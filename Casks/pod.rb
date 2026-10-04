@@ -17,11 +17,12 @@ cask "pod" do
 
   # Why no auto_updates: Pod builds are unsigned, and macOS only lets a signed app
   # replace itself, so brew upgrade is the update path.
-  conflicts_with cask: ["orca", "orca@rc"]
   depends_on macos: :monterey
 
   app "Pod.app"
-  binary "#{appdir}/Pod.app/Contents/Resources/bin/orca"
+  # Why target "pod": stock Orca owns the orca command. Inside a terminal that Pod
+  # opens, orca still runs Pod's own CLI.
+  binary "#{appdir}/Pod.app/Contents/Resources/bin/orca", target: "pod"
 
   # Why: the build is unsigned, so Gatekeeper would refuse the downloaded app
   # ("the developer cannot be verified"). Clearing quarantine here means
@@ -31,8 +32,7 @@ cask "pod" do
   end
 
   zap trash: [
-    "~/.orca",
-    "~/Library/Application Support/orca",
+    "~/Library/Application Support/Pod",
     "~/Library/Caches/io.github.saiemamer.pod",
     "~/Library/Caches/io.github.saiemamer.pod.ShipIt",
     "~/Library/HTTPStorages/io.github.saiemamer.pod",
