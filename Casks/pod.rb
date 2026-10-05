@@ -32,6 +32,7 @@ cask "pod" do
   end
 
   zap trash: [
+    "~/.pod",
     "~/Library/Application Support/Pod",
     "~/Library/Caches/io.github.saiemamer.pod",
     "~/Library/Caches/io.github.saiemamer.pod.ShipIt",
